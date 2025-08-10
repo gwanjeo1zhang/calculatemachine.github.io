@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>피보나치 수열 계산기</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        input[type="number"] {
+            padding: 12px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1.1em;
+            width: 150px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .method-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .method-btn {
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .method-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .method-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .results-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .result-card h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+            padding-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 1.1em;
+            color: #495057;
+            word-break: break-all;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin: 10px 0;
+        }
+
+        .performance-info {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+
+        .sequence-display {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+        }
+
+        .sequence-display h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .sequence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .sequence-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 3px solid #667eea;
+            font-size: 0.9em;
+        }
+
+        .sequence-item strong {
+            color: #667eea;
+        }
+
+        .algorithm-comparison {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #dee2e6;
+        }
+
+        .algorithm-comparison h3 {
+            color: #495057;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .comparison-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #f5c6cb;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .method-selector {
+                flex-direction: column;
+            }
+            
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>피보나치 수열 계산기</h1>
+            <p>동적 계획법을 활용한 효율적인 피보나치 수열 계산 및 알고리즘 성능 비교</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="fibNumber">n번째 피보나치 수:</label>
+                    <input type="number" id="fibNumber" min="0" max="1000" value="10" placeholder="숫자 입력">
+                    
+                    <div class="method-selector">
+                        <span style="font-weight: 600; color: #495057;">계산 방법:</span>
+                        <button class="method-btn active" data-method="dp">동적 계획법</button>
+                        <button class="method-btn" data-method="recursive">재귀</button>
+                        <button class="method-btn" data-method="iterative">반복문</button>
+                        <button class="method-btn" data-method="all">전체 비교</button>
+                    </div>
+                    
+                    <button class="calculate-btn" onclick="calculateFibonacci()">계산하기</button>
+                </div>
+            </div>
+
+            <div id="results" class="results-section" style="display: none;">
+                <!-- 결과가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMethod = 'dp';
+        let fibCache = {};
+
+        // 메서드 선택 버튼 이벤트
+        document.querySelectorAll('.method-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedMethod = this.dataset.method;
+            });
+        });
+
+        // 엔터 키로 계산
+        document.getElementById('fibNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateFibonacci();
+            }
+        });
+
+        // 동적 계획법 (메모이제이션)
+        function fibonacciDP(n) {
+            if (fibCache[n] !== undefined) return fibCache[n];
+            
+            if (n <= 1) return n;
+            
+            fibCache[n] = fibonacciDP(n - 1) + fibonacciDP(n - 2);
+            return fibCache[n];
+        }
+
+        // 재귀 방법 (비효율적)
+        function fibonacciRecursive(n) {
+            if (n <= 1) return n;
+            return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
+        }
+
+        // 반복문 방법
+        function fibonacciIterative(n) {
+            if (n <= 1) return n;
+            
+            let a = 0, b = 1;
+            for (let i = 2; i <= n; i++) {
+                [a, b] = [b, a + b];
+            }
+            return b;
+        }
+
+        // 수열 생성 (동적 계획법 사용)
+        function generateSequence(n) {
+            const sequence = [];
+            for (let i = 0; i <= Math.min(n, 20); i++) {
+                sequence.push({index: i, value: fibonacciDP(i)});
+            }
+            return sequence;
+        }
+
+        // 성능 측정 함수
+        function measurePerformance(func, n) {
+            const start = performance.now();
+            const result = func(n);
+            const end = performance.now();
+            return {
+                result: result,
+                time: (end - start).toFixed(4)
+            };
+        }
+
+        function calculateFibonacci() {
+            const n = parseInt(document.getElementById('fibNumber').value);
+            
+            if (isNaN(n) || n < 0 || n > 1000) {
+                showError('0 이상 1000 이하의 숫자를 입력해주세요.');
+                return;
+            }
+
+            // 캐시 초기화
+            fibCache = {};
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'grid';
+            
+            if (selectedMethod === 'all') {
+                showAllComparison(n);
+            } else {
+                showSingleResult(n, selectedMethod);
+            }
+        }
+
+        function showSingleResult(n, method) {
+            let func, methodName;
+            
+            switch(method) {
+                case 'dp':
+                    func = fibonacciDP;
+                    methodName = '동적 계획법 (메모이제이션)';
+                    break;
+                case 'recursive':
+                    func = fibonacciRecursive;
+                    methodName = '재귀 방법';
+                    break;
+                case 'iterative':
+                    func = fibonacciIterative;
+                    methodName = '반복문 방법';
+                    break;
+            }
+
+            // 재귀 방법의 경우 큰 수에서는 계산하지 않음
+            if (method === 'recursive' && n > 40) {
+                showError('재귀 방법은 성능상 40 이하의 수만 계산할 수 있습니다.');
+                return;
+            }
+
+            const performance = measurePerformance(func, n);
+            const sequence = generateSequence(n);
+
+            document.getElementById('results').innerHTML = `
+                <div class="result-card">
+                    <h3>${methodName}</h3>
+                    <div class="result-value">F(${n}) = ${performance.result}</div>
+                    <div class="performance-info">
+                        계산 시간: ${performance.time}ms<br>
+                        ${getMethodDescription(method)}
+                    </div>
+                </div>
+
+                <div class="sequence-display">
+                    <h3>피보나치 수열 (처음 ${Math.min(n + 1, 21)}개)</h3>
+                    <div class="sequence-grid">
+                        ${sequence.map(item => 
+                            `<div class="sequence-item">
+                                <strong>F(${item.index})</strong><br>${item.value}
+                            </div>`
+                        ).join('')}
+                    </div>
+                    ${n > 20 ? '<p style="text-align: center; margin-top: 15px; color: #6c757d;">처음 21개만 표시됩니다.</p>' : ''}
+                </div>
+            `;
+        }
+
+        function showAllComparison(n) {
+            const methods = [
+                {key: 'iterative', name: '반복문', func: fibonacciIterative},
+                {key: 'dp', name: '동적 계획법', func: fibonacciDP}
+            ];
+
+            // 재귀는 성능상 작은 수에서만 비교
+            if (n <= 40) {
+                methods.push({key: 'recursive', name: '재귀', func: fibonacciRecursive});
+            }
+
+            const results = methods.map(method => ({
+                ...method,
+                ...measurePerformance(method.func, n)
+            }));
+
+            const sequence = generateSequence(n);
+            const fastest = results.reduce((prev, current) => 
+                parseFloat(prev.time) < parseFloat(current.time) ? prev : current
+            );
+
+            document.getElementById('results').innerHTML = `
+                <div class="algorithm-comparison">
+                    <h3>알고리즘 성능 비교 - F(${n})</h3>
+                    <div class="comparison-grid">
+                        ${results.map(result => `
+                            <div class="comparison-item">
+                                <h4 style="color: ${result.key === fastest.key ? '#28a745' : '#667eea'}; margin-bottom: 10px;">
+                                    ${result.name} ${result.key === fastest.key ? '🏆' : ''}
+                                </h4>
+                                <div><strong>결과:</strong> ${result.result}</div>
+                                <div><strong>시간:</strong> ${result.time}ms</div>
+                                <div style="margin-top: 10px; font-size: 0.9em; color: #6c757d;">
+                                    ${getMethodDescription(result.key)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="sequence-display">
+                    <h3>피보나치 수열 (처음 ${Math.min(n + 1, 21)}개)</h3>
+                    <div class="sequence-grid">
+                        ${sequence.map(item => 
+                            `<div class="sequence-item">
+                                <strong>F(${item.index})</strong><br>${item.value}
+                            </div>`
+                        ).join('')}
+                    </div>
+                    ${n > 20 ? '<p style="text-align: center; margin-top: 15px; color: #6c757d;">처음 21개만 표시됩니다.</p>' : ''}
+                </div>
+            `;
+        }
+
+        function getMethodDescription(method) {
+            const descriptions = {
+                'dp': '시간복잡도: O(n), 공간복잡도: O(n) - 중복 계산을 메모이제이션으로 방지',
+                'recursive': '시간복잡도: O(2^n), 공간복잡도: O(n) - 중복 계산으로 인해 비효율적',
+                'iterative': '시간복잡도: O(n), 공간복잡도: O(1) - 가장 효율적인 공간 사용'
+            };
+            return descriptions[method] || '';
+        }
+
+        function showError(message) {
+            document.getElementById('results').innerHTML = `
+                <div class="error-message">
+                    ${message}
+                </div>
+            `;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // 초기 계산
+        calculateFibonacci();
+    </script>
+</body>
+</html>
